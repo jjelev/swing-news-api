@@ -15,6 +15,7 @@ composer install
 ```bash
 cp .env.example .env
 ```
+Note that in case of Docker Compose use, `MYSQL_HOST=news-db`, mysql service is on different container.
 ### Run the Tests
 ```
 make test
