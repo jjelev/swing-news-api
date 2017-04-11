@@ -1,0 +1,33 @@
+Да се направи REST API, поддържащо следните методи:
+
+GET  /news
+@return [{id, title, date, text}]
+
+GET  /news/:id
+@return {id, title, date, text}
+
+POST /news/:id [:title, :date, :text]
+@return {success}
+
+POST /news/ [:title, :date, :text]
+@return {id, title, date, text}
+
+DELETE /news/:id
+@return {success}
+
+Към API-то да се напише клас Router, който да може да се използва по следния начин:
+$router = new Router();
+$router->map( 'GET, '/news/[:id]', function($id) {});
+$router->map( 'POST', '/news/:id', 'News#update' {});
+$router->map( 'POST', '/news/', 'News#create {});
+$router->map( 'DELETE', '/news/:id', [$news, 'delete']);
+$router->map( 'GET', '/users/:userId/comments/[:id]', function($userId, $id) {}); // this is just usage example
+$result = $router->match();
+
+Изисквания:
+Кодът да е OOP и да е максимално опростен, прегледен и удобен за разрастване
+Данните да се записват в MySQL(оптимизирана база) и да се връщат като json в указания формат.
+Да не се използва framework и готов код, но да има структура
+Валидация на user input данните
+Да няма никакви security issues
+Да се изпрати в пакет с unit/API tests (http://phpunit.de, за всеки рекуест по отделно да има тест, min 10 теста)

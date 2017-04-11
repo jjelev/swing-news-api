@@ -1,0 +1,9 @@
+#Docker Folders
+/storage
+/vendor
+/html
+
+#Editors
+/.idea
+.vscode
+nbproject

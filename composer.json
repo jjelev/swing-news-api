@@ -1,0 +1,24 @@
+{
+    "name": "jjelev/swing-news-api",
+    "description": "Simple News REST API for testing purposes.",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jeliu Jelev",
+            "email": "j.jellev@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.1",
+        "fzaninotto/faker": "^1.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Swing\\": "src/"
+        }
+    }
+}
