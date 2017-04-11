@@ -7,3 +7,6 @@
 /.idea
 .vscode
 nbproject
+
+#Other
+.env

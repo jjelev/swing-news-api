@@ -11,6 +11,10 @@ or just setup the environment yourself.
 ```bash
 composer install
 ```
+### Create .env file to store configuration
+```bash
+cp .env.example .env
+```
 ### Run the Tests
 ```
 make test
