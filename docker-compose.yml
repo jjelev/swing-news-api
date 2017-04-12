@@ -17,10 +17,8 @@ services:
             - 80:80
             - 443:443
         volumes:
-            - ./public:/var/www/html
-            - ./:/var/www
+            - ./:/var/www/swing-news-api
             - ./conf/php/php.ini:/usr/local/etc/php/php.ini
-            - ./conf/swing-news-api.conf:/etc/apache2/sites-available/swing-news-api.conf
             - ./storage/log/apache2:/var/log/apache2
         links:
             - news-db
