@@ -41,7 +41,7 @@ class Router
                 }
 
                 // check if part matches mandatory key - example ':id'
-                if (preg_match(self::REQUIRED_REGEX, $routeCmp) === 1) {
+                if (preg_match(self::REQUIRED_REGEX, $routeCmp) === 1 && $uriCmp !== '') {
                     continue;
                 }
 

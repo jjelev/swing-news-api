@@ -13,9 +13,11 @@ class Kernel
     {
         $router = new Router();
 
-        $router->map('GET', '/news/:id', function ($id) {
+        $router->map('GET', '/news/[:id]', function ($id) {
         });
         $router->map('POST', '/news/:id', 'News#update');
+        $router->map('POST', '/news', 'News#create');
+        $router->map('DELETE', '/news/:id', 'News#delete');
 
         $router->match();
     }
