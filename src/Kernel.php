@@ -7,17 +7,16 @@ class Kernel
     public function run()
     {
         $this->registerRoutes();
-
-        var_dump(self::class);
-        exit;
     }
 
     private function registerRoutes()
     {
         $router = new Router();
-//        $router->map('GET', '/news/[:id]', function ($id) {});
-//        $router->map('POST', '/news/:id', 'News#update' {});
 
-        $result = $router->match();
+        $router->map('GET', '/news/:id/[:date]', function ($id) {
+        });
+        $router->map('POST', '/news/:id', 'News#update');
+
+        $router->match();
     }
 }
