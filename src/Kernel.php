@@ -19,6 +19,6 @@ class Kernel
         $router->map('POST', '/news', 'News#create');
         $router->map('DELETE', '/news/:id', 'News#delete');
 
-        $router->match();
+        var_dump($router->match());
     }
 }

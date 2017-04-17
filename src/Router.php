@@ -35,18 +35,11 @@ class Router
             foreach ($route['path'] as $k => $routeCmp) {
                 $uriCmp = $uriComponents[$k] ?? '';
 
-                // check if path part matches the route syntax part
-                if ($routeCmp === $uriCmp) {
-                    continue;
-                }
-
-                // check if part matches mandatory key - example ':id'
-                if (preg_match(self::REQUIRED_REGEX, $routeCmp) === 1 && $uriCmp !== '') {
-                    continue;
-                }
-
-                // check if part matches optional key - example '[:id]'
-                if (preg_match(self::OPTIONAL_REGEX, $routeCmp) === 1) {
+                // check if path part matches the route syntax part, mandatory or optional keys
+                if ($routeCmp === $uriCmp ||
+                    (preg_match(self::REQUIRED_REGEX, $routeCmp) === 1 && $uriCmp !== '') ||
+                    preg_match(self::OPTIONAL_REGEX, $routeCmp) === 1
+                ) {
                     continue;
                 }
 
