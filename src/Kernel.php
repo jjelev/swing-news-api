@@ -16,6 +16,16 @@ class Kernel
         $this->registerRoutes();
 
         $route = $this->router->match();
+
+        if ($route) {
+            try {
+                $this->router->dispatchAction($route);
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
+        } else {
+            echo 'Nothing here';
+        }
     }
 
     private function registerRoutes(): void
