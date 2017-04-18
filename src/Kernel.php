@@ -4,21 +4,26 @@ namespace Swing;
 
 class Kernel
 {
-    public function run()
+    private $router;
+
+    function __construct()
     {
-        $this->registerRoutes();
+        $this->router = new Router();
     }
 
-    private function registerRoutes()
+    public function run(): void
     {
-        $router = new Router();
+        $this->registerRoutes();
 
-        $router->map('GET', '/news/[:id]', function ($id) {
+        $route = $this->router->match();
+    }
+
+    private function registerRoutes(): void
+    {
+        $this->router->map('GET', '/news/[:id]', function ($id) {
         });
-        $router->map('POST', '/news/:id', 'News#update');
-        $router->map('POST', '/news', 'News#create');
-        $router->map('DELETE', '/news/:id', 'News#delete');
-
-        var_dump($router->match());
+        $this->router->map('POST', '/news/:id', 'News#update');
+        $this->router->map('POST', '/news', 'News#create');
+        $this->router->map('DELETE', '/news/:id', 'News#delete');
     }
 }
