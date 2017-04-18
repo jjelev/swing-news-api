@@ -20,7 +20,7 @@ class Router
 
     public function match()
     {
-        $uriComponents = $this->decomposePath($_SERVER['REQUEST_URI']);
+        $uriComponents = $this->decomposePath(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 
         // Main Routes Loop
         foreach ($this->routes as $route) {
