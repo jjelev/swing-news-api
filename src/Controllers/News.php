@@ -6,9 +6,12 @@ use PDOException;
 use Swing\Models\News as Model;
 use Swing\Request;
 use Swing\Response;
+use Swing\ValidatorTrait;
 
 class News
 {
+    use ValidatorTrait;
+
     /**
      * @var Model
      */
@@ -21,7 +24,15 @@ class News
 
     public function get(?int $id = null)
     {
-        //TODO: Validation!
+        $this->validate($id, []);
+
+        if ($this->validationFails()) {
+            $response = new Response([
+                'errors' => $this->validationErrors()
+            ]);
+
+            return $response->json();
+        }
 
         try {
             $content = $this->db->select($id);

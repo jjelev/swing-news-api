@@ -38,10 +38,12 @@ class Response
         }
     }
 
-    public function json(): void
+    public function json()
     {
         $this->headers(['Content-Type' => 'application/json']);
 
         echo json_encode($this->content);
+
+        return $this;
     }
 }
