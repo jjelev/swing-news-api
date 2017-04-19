@@ -4,7 +4,7 @@ namespace Swing\Models;
 
 use PDO;
 
-class Model
+abstract class Model
 {
     protected $pdo;
 
