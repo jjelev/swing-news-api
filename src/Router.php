@@ -135,6 +135,7 @@ class Router
                 throw new UnexpectedValueException('$param expects to be type of ReflectionParameter');
             }
 
+            // If action parameter has no type definition
             if ($param->hasType() === false) {
                 $methodKeys[] = array_shift($keys);
                 continue;
@@ -146,7 +147,11 @@ class Router
             if ($paramType->isBuiltin()) {
                 $key = array_shift($keys);
 
-                settype($key, $paramType);
+                // Allow passing nullable types to actions
+                if ($key !== null || $paramType->allowsNull() === false) {
+                    // Set correct type for the action parameter
+                    settype($key, $paramType);
+                }
 
                 $methodKeys[] = $key;
 
