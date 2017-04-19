@@ -4,6 +4,7 @@ namespace Swing;
 
 use Closure;
 use InvalidArgumentException;
+use ReflectionFunction;
 
 class Router
 {
@@ -104,8 +105,15 @@ class Router
 
     protected function getRouteVariables(array $routePath, array $urlPath): array
     {
-        //TODO: Different diff algorithm, optional key must be in the array as empty string or null
-        $keys = array_diff($urlPath, $routePath);
+        $keys = [];
+
+        foreach ($routePath as $k => $routeCmp) {
+            $uriCmp = $urlPath[$k] ?? null;
+
+            if ($routeCmp !== $uriCmp) {
+                $keys[$k] = $uriCmp;
+            }
+        }
 
         return $keys;
     }
@@ -124,7 +132,7 @@ class Router
 
         if ($action instanceof Closure) {
 
-            $reflection = new \ReflectionFunction($action);
+            $reflection = new ReflectionFunction($action);
             $params = $reflection->getParameters();
 
             if (count($params) > count($keys)) {
