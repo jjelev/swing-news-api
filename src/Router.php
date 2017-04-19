@@ -5,6 +5,9 @@ namespace Swing;
 use Closure;
 use InvalidArgumentException;
 use ReflectionFunction;
+use ReflectionObject;
+use ReflectionParameter;
+use UnexpectedValueException;
 
 class Router
 {
@@ -111,11 +114,54 @@ class Router
             $uriCmp = $urlPath[$k] ?? null;
 
             if ($routeCmp !== $uriCmp) {
-                $keys[$k] = $uriCmp;
+                $keys[] = $uriCmp;
             }
         }
 
         return $keys;
+    }
+
+    /**
+     * @param array $params
+     * @param array $keys
+     * @return array
+     */
+    protected function getActionParameters(array $params, array $keys): array
+    {
+        $methodKeys = [];
+
+        foreach ($params as $param) {
+            if (!($param instanceof ReflectionParameter)) {
+                throw new UnexpectedValueException('$param expects to be type of ReflectionParameter');
+            }
+
+            if ($param->hasType() === false) {
+                $methodKeys[] = array_shift($keys);
+                continue;
+            }
+
+            $paramType = $param->getType();
+
+            // Cast to built in PHP parameters or create new object (example: new Request())
+            if ($paramType->isBuiltin()) {
+                $key = array_shift($keys);
+
+                settype($key, $paramType);
+
+                $methodKeys[] = $key;
+
+            } else {
+                $classNamespace = strval($paramType);
+
+                if (!class_exists($classNamespace)) {
+                    throw new InvalidArgumentException("Class {$classNamespace} does not exist.");
+                }
+
+                $methodKeys[] = new $classNamespace();
+            }
+        }
+
+        return $methodKeys;
     }
 
     /**
@@ -146,6 +192,7 @@ class Router
 
         //The Place where magic(or bullshit) happens
 
+        //Create Model
         $classNamespace = '\\Swing\\Models\\' . $className;
 
         if (!class_exists($classNamespace)) {
@@ -154,6 +201,7 @@ class Router
 
         $model = new $classNamespace();
 
+        //Create Controller
         $classNamespace = '\\Swing\\Controllers\\' . $className;
 
         if (!class_exists($classNamespace)) {
@@ -162,11 +210,16 @@ class Router
 
         $controller = new $classNamespace($model);
 
+        //Dispatch Action section
         if (!method_exists($controller, $actionName)) {
-            throw new InvalidArgumentException("Method {$actionName} does not exist.");
+            throw new InvalidArgumentException("Method {$actionName} does not exist in {$classNamespace}");
         }
 
-        //No Service container, so we will inject Request in every action (wtf!)
-        return $controller->{$actionName}(new Request(), ...$keys);
+        //Get Controller Method parameters
+        $reflectionObj = new ReflectionObject($controller);
+        $method = $reflectionObj->getMethod($actionName);
+        $params = $method->getParameters();
+
+        return $controller->{$actionName}(...$this->getActionParameters($params, $keys));
     }
 }
