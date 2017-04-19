@@ -30,8 +30,9 @@ class Kernel
 
     private function registerRoutes(): void
     {
-        $this->router->map('GET', '/news/[:id]', function ($id) {
-        });
+        $this->router->map('GET', '/news/[:id]', ['News', 'get']);
+//        $this->router->map('GET', '/news/[:id]', function ($id) {
+//        });
         $this->router->map('POST', '/news/:id', 'News#update');
         $this->router->map('POST', '/news', 'News#create');
         $this->router->map('DELETE', '/news/:id', 'News#delete');
