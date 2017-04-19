@@ -3,7 +3,7 @@
 namespace Swing;
 
 use Closure;
-use Exception;
+use InvalidArgumentException;
 
 class Router
 {
@@ -110,6 +110,12 @@ class Router
         return $keys;
     }
 
+    /**
+     * Dynamically dispatches action
+     *
+     * @param array $route
+     * @return mixed
+     */
     public function dispatchAction(array $route)
     {
         $action = $route['action'];
@@ -122,12 +128,37 @@ class Router
             $params = $reflection->getParameters();
 
             if (count($params) > count($keys)) {
-                throw new Exception('Some function arguments don\'t exist in route path');
+                throw new InvalidArgumentException('Some function arguments don\'t exist in route path');
             }
 
             return $action(...$keys);
         }
 
-        //TODO: Dispatch Controller Actions
+        list($className, $actionName) = is_array($action) ? $action : explode('#', $action);
+
+        //The Place where magic(or bullshit) happens
+
+        $classNamespace = '\\Swing\\Models\\' . $className;
+
+        if (!class_exists($classNamespace)) {
+            throw new InvalidArgumentException("Model {$classNamespace} does not exist.");
+        }
+
+        $model = new $classNamespace();
+
+        $classNamespace = '\\Swing\\Controllers\\' . $className;
+
+        if (!class_exists($classNamespace)) {
+            throw new InvalidArgumentException("Controller {$classNamespace} does not exist.");
+        }
+
+        $controller = new $classNamespace($model);
+
+        if (!method_exists($controller, $actionName)) {
+            throw new InvalidArgumentException("Method {$actionName} does not exist.");
+        }
+
+        //No Service container, so we will inject Request in every action (wtf!)
+        return $controller->{$actionName}(new Request(), ...$keys);
     }
 }
