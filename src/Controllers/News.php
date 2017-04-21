@@ -22,9 +22,9 @@ class News
         $this->db = new $model;
     }
 
-    public function get(?int $id = null)
+    public function get($id = null)
     {
-        $this->validate($id, []);
+        $this->validate($id, 'nullable|integer');
 
         if ($this->validationFails()) {
             $response = new Response([
@@ -51,6 +51,17 @@ class News
         $title = $request->input('title');
         $text = $request->input('text');
 
+        $this->validate($title, 'string|max:255');
+        $this->validate($text, 'string|max:10000');
+
+        if ($this->validationFails()) {
+            $response = new Response([
+                'errors' => $this->validationErrors()
+            ]);
+
+            return $response->json();
+        }
+
         try {
             $result = $this->db->insert($title, $text);
             $content = (['result' => $result]);
@@ -72,6 +83,18 @@ class News
         $text = $request->input('text');
         $date = $request->input('date');
 
+        $this->validate($title, 'string|max:255');
+        $this->validate($text, 'string|max:10000');
+        $this->validate($date, 'string|max:10000');
+
+        if ($this->validationFails()) {
+            $response = new Response([
+                'errors' => $this->validationErrors()
+            ]);
+
+            return $response->json();
+        }
+
         try {
             $result = $this->db->update($id, $title, $text, $date);
             $content = (['result' => $result]);
@@ -89,6 +112,16 @@ class News
 
     public function delete(int $id)
     {
+        $this->validate($id, 'integer');
+
+        if ($this->validationFails()) {
+            $response = new Response([
+                'errors' => $this->validationErrors()
+            ]);
+
+            return $response->json();
+        }
+
         try {
             $result = $this->db->delete($id);
             $content = (['result' => $result]);
