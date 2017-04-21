@@ -14,6 +14,9 @@ class Router
     const REQUIRED_REGEX = '/^:\w+/i';
     const OPTIONAL_REGEX = '/^\[:\w+]$/i';
 
+    const MODELS_NAMESPACE = '\\Swing\\Models\\';
+    const CONTROLLERS_NAMESPACE = '\\Swing\\Controllers\\';
+
     protected $routes;
 
     /**
@@ -198,7 +201,7 @@ class Router
         //The Place where magic(or bullshit) happens
 
         //Create Model
-        $classNamespace = '\\Swing\\Models\\' . $className;
+        $classNamespace = self::MODELS_NAMESPACE . $className;
 
         if (!class_exists($classNamespace)) {
             throw new InvalidArgumentException("Model {$classNamespace} does not exist.");
@@ -207,7 +210,7 @@ class Router
         $model = new $classNamespace();
 
         //Create Controller
-        $classNamespace = '\\Swing\\Controllers\\' . $className;
+        $classNamespace = self::CONTROLLERS_NAMESPACE . $className;
 
         if (!class_exists($classNamespace)) {
             throw new InvalidArgumentException("Controller {$classNamespace} does not exist.");
