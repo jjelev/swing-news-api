@@ -200,15 +200,6 @@ class Router
 
         //The Place where magic(or bullshit) happens
 
-        //Create Model
-        $classNamespace = self::MODELS_NAMESPACE . $className;
-
-        if (!class_exists($classNamespace)) {
-            throw new InvalidArgumentException("Model {$classNamespace} does not exist.");
-        }
-
-        $model = new $classNamespace();
-
         //Create Controller
         $classNamespace = self::CONTROLLERS_NAMESPACE . $className;
 
@@ -216,7 +207,7 @@ class Router
             throw new InvalidArgumentException("Controller {$classNamespace} does not exist.");
         }
 
-        $controller = new $classNamespace($model);
+        $controller = new $classNamespace();
 
         //Dispatch Action section
         if (!method_exists($controller, $actionName)) {

@@ -15,11 +15,11 @@ class News
     /**
      * @var Model
      */
-    protected $db;
+    protected $model;
 
-    function __construct(Model $model)
+    function __construct()
     {
-        $this->db = new $model;
+        $this->model = new Model();
     }
 
     public function get($id = null)
@@ -35,7 +35,7 @@ class News
         }
 
         try {
-            $content = $this->db->select($id);
+            $content = $this->model->select($id);
 
         } catch (PDOException $e) {
             $content = ['errors' => [$e->getMessage()]];
@@ -63,7 +63,7 @@ class News
         }
 
         try {
-            $result = $this->db->insert($title, $text);
+            $result = $this->model->insert($title, $text);
             $content = (['result' => $result]);
 
         } catch (PDOException $e) {
@@ -96,7 +96,7 @@ class News
         }
 
         try {
-            $result = $this->db->update($id, $title, $text, $date);
+            $result = $this->model->update($id, $title, $text, $date);
             $content = (['result' => $result]);
 
         } catch (PDOException $e) {
@@ -123,7 +123,7 @@ class News
         }
 
         try {
-            $result = $this->db->delete($id);
+            $result = $this->model->delete($id);
             $content = (['result' => $result]);
 
         } catch (PDOException $e) {
