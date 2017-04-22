@@ -31,14 +31,14 @@ class Kernel
     /**
      * Routes registration
      *
-     * path syntax:
+     * Path Syntax:
      * :id - mandatory
      * [:id] - optional
      *
-     * action syntax:
+     * Action Syntax:
      * Controller#action
      * ['Controller', 'action']
-     * Callboack function - for direct action execution
+     * Callback - for direct action execution
      */
     private function registerRoutes(): void
     {
