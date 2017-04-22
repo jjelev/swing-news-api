@@ -28,11 +28,26 @@ class Kernel
         }
     }
 
+    /**
+     * Routes registration
+     *
+     * path syntax:
+     * :id - mandatory
+     * [:id] - optional
+     *
+     * action syntax:
+     * Controller#action
+     * ['Controller', 'action']
+     * Callboack function - for direct action execution
+     */
     private function registerRoutes(): void
     {
-        $this->router->map('GET', '/news/[:id]', ['News', 'get']);
 //        $this->router->map('GET', '/news/[:id]', function ($id) {
+//            $id++;
+//            echo json_encode(['result' => $id]);
 //        });
+
+        $this->router->map('GET', '/news/[:id]', ['News', 'get']);
         $this->router->map('POST', '/news/:id', 'News#update');
         $this->router->map('POST', '/news', 'News#create');
         $this->router->map('DELETE', '/news/:id', 'News#delete');
