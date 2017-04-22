@@ -12,6 +12,7 @@ trait ValidatorTrait
         'string' => 'Text contains special characters',
         'min' => 'Minimum length of the text is not met',
         'max' => 'Text exceeds maximum length',
+        'timestamp' => 'Date must follow format YYYY-MM-DD HH:MM:SS',
     ];
 
     protected $errors = [];
@@ -56,35 +57,29 @@ trait ValidatorTrait
      */
     public function validate($content, array $rules): void
     {
-        try {
+        foreach ($rules as $key => $rule) {
+            $checkContent = $content instanceof Request ? $content->input($key) : $content;
 
-            foreach ($rules as $key => $rule) {
-                $checkContent = $content instanceof Request ? $content->input($key) : $content;
+            $operations = $this->checkRules($checkContent, explode('|', $rule));
 
-                $operations = $this->checkRules($checkContent, explode('|', $rule));
+            $conditionals = array_flip($this->conditional);
 
-                $conditionals = array_flip($this->conditional);
+            $normalRules = array_diff_key($operations, $conditionals);
+            $foundConditionals = array_intersect_key($operations, $conditionals);
 
-                $normalRules = array_diff_key($operations, $conditionals);
-                $foundConditionals = array_intersect_key($operations, $conditionals);
-
-                // Override Rules
-                if (in_array(true, $foundConditionals)) {
-                    foreach ($normalRules as $k => $v) {
-                        $normalRules[$k] = true;
-                    }
-                }
-
-                // Set Error Messages
-                foreach ($normalRules as $opKey => $opValue) {
-                    if ($opValue === false) {
-                        $this->errors[$key] = $this->messages[$opKey];
-                    }
+            // Override Rules
+            if (in_array(true, $foundConditionals)) {
+                foreach ($normalRules as $k => $v) {
+                    $normalRules[$k] = true;
                 }
             }
 
-        } catch (Exception $e) {
-            $this->errors[] = 'Incorrect data';
+            // Set Error Messages
+            foreach ($normalRules as $opKey => $opValue) {
+                if ($opValue === false) {
+                    $this->errors[$key] = $this->messages[$opKey] ?? $opValue;
+                }
+            }
         }
     }
 
@@ -122,5 +117,12 @@ trait ValidatorTrait
     private function max($value, $characters): bool
     {
         return strlen($value) <= (int)$characters;
+    }
+
+    public function timestamp($value): bool
+    {
+        $pattern = '/^[0-9]{4}-([0][1-9]|[1][0-2])-([0][1-9]|[1-2][0-9]|[3][01]) ([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/';
+
+        return preg_match($pattern, $value) === 1;
     }
 }
