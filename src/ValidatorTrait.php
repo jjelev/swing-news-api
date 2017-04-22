@@ -2,6 +2,7 @@
 
 namespace Swing;
 
+use Exception;
 use UnexpectedValueException;
 
 trait ValidatorTrait
@@ -32,34 +33,6 @@ trait ValidatorTrait
         throw new UnexpectedValueException("Rule {$name} not supported in validator");
     }
 
-    /**
-     * @param $content
-     * @param string $rules
-     */
-    public function validate($content, string $rules): void
-    {
-        $operations = $this->checkRules($content, explode('|', $rules));
-
-        $conditionals = array_flip($this->conditional);
-
-        $normalRules = array_diff_key($operations, $conditionals);
-        $foundSpecials = array_intersect_key($operations, $conditionals);
-
-        // Override Rules
-        if (in_array(true, $foundSpecials)) {
-            foreach ($normalRules as $k => $v) {
-                $normalRules[$k] = true;
-            }
-        }
-
-        // Set Error Messages
-        foreach ($normalRules as $opKey => $opValue) {
-            if ($opValue === false) {
-                $this->errors[$opKey] = $this->messages[$opKey];
-            }
-        }
-    }
-
     protected function checkRules($content, $rulesList): array
     {
         $result = [];
@@ -73,6 +46,46 @@ trait ValidatorTrait
         }
 
         return $result;
+    }
+
+    /**
+     * Validate Request or single variable
+     *
+     * @param mixed $content
+     * @param array $rules
+     */
+    public function validate($content, array $rules): void
+    {
+        try {
+
+            foreach ($rules as $key => $rule) {
+                $checkContent = $content instanceof Request ? $content->input($key) : $content;
+
+                $operations = $this->checkRules($checkContent, explode('|', $rule));
+
+                $conditionals = array_flip($this->conditional);
+
+                $normalRules = array_diff_key($operations, $conditionals);
+                $foundConditionals = array_intersect_key($operations, $conditionals);
+
+                // Override Rules
+                if (in_array(true, $foundConditionals)) {
+                    foreach ($normalRules as $k => $v) {
+                        $normalRules[$k] = true;
+                    }
+                }
+
+                // Set Error Messages
+                foreach ($normalRules as $opKey => $opValue) {
+                    if ($opValue === false) {
+                        $this->errors[$key] = $this->messages[$opKey];
+                    }
+                }
+            }
+
+        } catch (Exception $e) {
+            $this->errors[] = 'Incorrect data';
+        }
     }
 
     public function validationErrors(): array
@@ -96,7 +109,7 @@ trait ValidatorTrait
         return filter_var($value, FILTER_SANITIZE_STRING) == $value;
     }
 
-    private function nullable($value)
+    private function nullable($value): bool
     {
         return $value === null;
     }

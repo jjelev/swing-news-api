@@ -24,7 +24,7 @@ class News
 
     public function get($id = null)
     {
-        $this->validate($id, 'nullable|integer');
+        $this->validate($id, ['nullable|integer']);
 
         if ($this->validationFails()) {
             $response = new Response([
@@ -48,11 +48,10 @@ class News
 
     public function create(Request $request)
     {
-        $title = $request->input('title');
-        $text = $request->input('text');
-
-        $this->validate($title, 'string|max:255');
-        $this->validate($text, 'string|max:10000');
+        $this->validate($request, [
+            'title' => 'string|min:4|max:255',
+            'text' => 'string|min:4|max:10000',
+        ]);
 
         if ($this->validationFails()) {
             $response = new Response([
@@ -61,6 +60,9 @@ class News
 
             return $response->json();
         }
+
+        $title = $request->input('title');
+        $text = $request->input('text');
 
         try {
             $result = $this->model->insert($title, $text);
@@ -79,13 +81,13 @@ class News
 
     public function update(Request $request, int $id)
     {
-        $title = $request->input('title');
-        $text = $request->input('text');
-        $date = $request->input('date');
-
-        $this->validate($title, 'string|max:255');
-        $this->validate($text, 'string|max:10000');
-        $this->validate($date, 'string|max:10000');
+        $this->validate($request, [
+            'title' => 'string|min:4|max:255',
+            'text' => 'string|min:4|max:10000',
+        ]);
+        $this->validate($id, [
+            'id' => 'nullable|integer'
+        ]);
 
         if ($this->validationFails()) {
             $response = new Response([
@@ -94,6 +96,10 @@ class News
 
             return $response->json();
         }
+
+        $title = $request->input('title');
+        $text = $request->input('text');
+        $date = $request->input('date');
 
         try {
             $result = $this->model->update($id, $title, $text, $date);
@@ -112,7 +118,7 @@ class News
 
     public function delete(int $id)
     {
-        $this->validate($id, 'integer');
+        $this->validate($id, ['integer']);
 
         if ($this->validationFails()) {
             $response = new Response([
