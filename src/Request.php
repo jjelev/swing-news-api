@@ -19,7 +19,7 @@ class Request
     public function input(?string $key = null, ?string $default = null)
     {
         if ($key === null) {
-            return $this->request;
+            return $this->all();
         }
 
         if (array_key_exists($key, $this->request)) {
