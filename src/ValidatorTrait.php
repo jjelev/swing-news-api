@@ -2,7 +2,6 @@
 
 namespace Swing;
 
-use Exception;
 use UnexpectedValueException;
 
 trait ValidatorTrait
@@ -34,6 +33,11 @@ trait ValidatorTrait
         throw new UnexpectedValueException("Rule {$name} not supported in validator");
     }
 
+    /**
+     * @param $content
+     * @param $rulesList
+     * @return array
+     */
     protected function checkRules($content, $rulesList): array
     {
         $result = [];
@@ -83,11 +87,17 @@ trait ValidatorTrait
         }
     }
 
+    /**
+     * @return array
+     */
     public function validationErrors(): array
     {
         return $this->errors;
     }
 
+    /**
+     * @return bool
+     */
     public function validationFails(): bool
     {
         return empty($this->errors) !== true;
@@ -119,7 +129,7 @@ trait ValidatorTrait
         return strlen($value) <= (int)$characters;
     }
 
-    public function timestamp($value): bool
+    private function timestamp($value): bool
     {
         $pattern = '/^[0-9]{4}-([0][1-9]|[1][0-2])-([0][1-9]|[1-2][0-9]|[3][01]) ([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/';
 
