@@ -31,7 +31,7 @@ class News extends Model
      * @param string $date
      * @return bool
      */
-    public function update(int $id, string $title, string $text, string $date): bool
+    public function update(int $id, string $title, string $text, ?string $date): bool
     {
         $sql = "UPDATE $this->table SET `title` = :title, `text` = :text, `date` = :date WHERE `id` = :id";
 
