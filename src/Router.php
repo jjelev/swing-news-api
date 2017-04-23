@@ -19,6 +19,15 @@ class Router
 
     protected $routes;
 
+    private $httpMethod;
+    private $requestUri;
+
+    function __construct(?string $method = null, ?string $uri = null)
+    {
+        $this->httpMethod = $method ?? $_SERVER['REQUEST_METHOD'];
+        $this->requestUri = $uri ?? $_SERVER['REQUEST_URI'];
+    }
+
     /**
      * Store route in router object
      *
@@ -42,13 +51,13 @@ class Router
      */
     public function match()
     {
-        $uriComponents = $this->decomposePath(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+        $uriComponents = $this->decomposePath(parse_url($this->requestUri, PHP_URL_PATH));
 
         // Main Routes Loop
         foreach ($this->routes as $route) {
             //Not fitting the route or not the http method we need
             if (count($uriComponents) > count($route['path']) ||
-                strcasecmp($route['method'], $_SERVER['REQUEST_METHOD']) !== 0
+                strcasecmp($route['method'], $this->httpMethod) !== 0
             ) {
                 continue;
             }
