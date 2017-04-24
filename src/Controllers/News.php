@@ -84,7 +84,7 @@ class News
         $this->validate($request, [
             'title' => 'string|min:4|max:255',
             'text' => 'string|min:4|max:10000',
-            'date' => 'timestamp',
+            'date' => 'nullable|timestamp',
         ]);
         $this->validate($id, [
             'id' => 'nullable|integer'

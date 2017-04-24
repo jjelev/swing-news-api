@@ -33,8 +33,10 @@ class Response
      */
     public function headers(array $headers): void
     {
-        foreach ($headers as $key => $value) {
-            header($key . ': ' . $value);
+        if (headers_sent() === false) {
+            foreach ($headers as $key => $value) {
+                header($key . ': ' . $value);
+            }
         }
     }
 
